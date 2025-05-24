@@ -3,7 +3,6 @@
 # /// script
 # dependencies = [
 #   "llm",
-#   // "llm-mlx",
 #   "llm-openrouter"
 # ]
 # ///
