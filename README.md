@@ -1,8 +1,8 @@
 # Vibeserver
 
-Delegation is the key to success, and web servers are no exception.
+Vibeserver is an ~mostly~ occasionally HTTP compliant webserver that will answer all requests by invoking an LLM which generates the response completely on-the-fly.
 
-Vibeserver is a ~mostly~ occasionally RFC 2616 and W3C HTML compliant webserver that will answer all requests by invoking an LLM which generates the response on-the-fly – or crash trying.
+Only very basic scaffolding exists to slightly increase the chances of a displayable response – the rest is all left to the LLM's imagination based on request parameters (URL, hostname, headers including the HTTP referer etc)!
 
 ## Demo
 
