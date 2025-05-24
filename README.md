@@ -26,6 +26,13 @@ Vibeserver is a ~mostly~ occasionally RFC 2616 and W3C HTML compliant webserver 
 `http://localhost:3000/blog/2025/05/go-got-it-wrong-why-null-strings-are-essential.html`:
 <img width="1061" alt="image" src="https://github.com/user-attachments/assets/55e01489-d1db-4bc4-8c68-a1778d81a22f" />
 
+### Guestbook
+
+Leave a message!
+
+<img width="1004" alt="image" src="https://github.com/user-attachments/assets/17f4238e-f534-4c7f-92c6-bb491c72d23e" />
+
+
 ### Terms and conditions
 
 It even knows not to take any responsibility for your shenanigans!
