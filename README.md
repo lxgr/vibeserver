@@ -2,7 +2,7 @@
 
 Delegation is the key to success, and web servers are no exception.
 
-Vibeserver is a ~mostly~ sometimes RFC and W3C compliant webserver that satisfies all requests by invoking an LLM which generates the response on-the-fly.
+Vibeserver is a ~mostly~ occasionally RFC 2616 and W3C HTML compliant webserver that will answer all requests by invoking an LLM which generates the response on-the-fly – or crash trying.
 
 ## Setup
 
@@ -32,3 +32,9 @@ It even knows not to take any responsibility for your shenanigans!
 
 <img width="515" alt="image" src="https://github.com/user-attachments/assets/f88cfd15-c09d-49ad-9318-f41f9f536f3e" />
 
+## Feature roadmap
+
+- [ ] Image generation
+- [ ] Threads? (but it'll just eat through my token budget faster)
+- [ ] Persistence? (probably not)
+- [ ] Make it self-hosting (i.e. replace the Python script with an LLM prompt for it, then execute the result)
