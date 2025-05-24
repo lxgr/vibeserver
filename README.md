@@ -38,6 +38,11 @@ https://vibes.lxgr.net/blog/2025/05/go-got-it-wrong-why-null-strings-are-essenti
 
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/464c8045-abfd-47aa-a4c6-2cc22f4da466" />
 
+### Hacker News
+
+https://vibes.lxgr.net/hackernews/news?p=2
+
+<img width="989" alt="image" src="https://github.com/user-attachments/assets/c834e375-5004-4c4f-8394-a6980f21f978" />
 
 ### Guestbook
 
