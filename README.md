@@ -25,3 +25,10 @@ Vibeserver is a ~mostly~ sometimes RFC and W3C compliant webserver that satisfie
 
 `http://localhost:3000/blog/2025/05/go-got-it-wrong-why-null-strings-are-essential.html`:
 <img width="1061" alt="image" src="https://github.com/user-attachments/assets/55e01489-d1db-4bc4-8c68-a1778d81a22f" />
+
+### Terms and conditions
+
+It even knows not to take any responsibility for your shenanigans!
+
+<img width="515" alt="image" src="https://github.com/user-attachments/assets/f88cfd15-c09d-49ad-9318-f41f9f536f3e" />
+
