@@ -22,7 +22,7 @@ It's protected by HTTP basic authentication to provide some protection against c
   - Local models have to be instlled per your plugin's instructions. For `mlx-llm`, running `llm install llm-mlx` and then `llm mlx download-model <modelname>` should do the trick. Non-thinking models work best for acceptable latency.
 - Configure your desired port number as `PORT` and model name as `MODEL_NAME`.
 
-## Examples
+## Gallery
 
 ### APIs
 ```
@@ -60,6 +60,13 @@ It knows GLSL!
 https://vibes.lxgr.net/webgl/shader-demos/simple-rotating-triangle.html
 
 <img width="812" alt="image" src="https://github.com/user-attachments/assets/38aadd20-1f4f-4b99-a573-c6dc1d286df9" />
+
+### Academia
+
+https://vibes.lxgr.net/sigbovik/submissions2025
+
+![image](https://github.com/user-attachments/assets/262a5abf-cf6d-4d1c-bd68-187c4c35b215)
+
 
 ### Anomalies
 
