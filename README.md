@@ -2,7 +2,7 @@
 
 Vibeserver is an ~mostly~ occasionally HTTP compliant webserver that will answer all requests by invoking an LLM which generates the response completely on-the-fly.
 
-Only very basic scaffolding exists to slightly increase the chances of a displayable response – the rest is all left to the LLM's imagination based on request parameters (URL, hostname, headers including the HTTP referer etc)!
+Only very basic scaffolding exists to slightly increase the chances of a parseable response – the rest is all left to the LLM's imagination based on request parameters (URL, hostname, headers including the HTTP referer etc)!
 
 ## Demo
 
