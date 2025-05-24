@@ -3,15 +3,16 @@
 # /// script
 # dependencies = [
 #   "llm",
-#   "llm-mlx",
+#   // "llm-mlx",
+#   "llm-openrouter"
 # ]
 # ///
 
 #!/usr/bin/env python3
 """
 HTTP server that forwards all requests to an LLM for creative responses.
-Run with uv or `pip install llm llm-mlx`.
-Install model via `llm mlx download-model mlx-community/gemma-3-12b-it-qat-3bit`.
+Run with uv or `pip install llm`.
+You can use any LLM backend that has a plugin for llm.
 """
 
 import json
@@ -21,7 +22,7 @@ import llm
 
 # Configuration
 PORT = 3000
-MODEL_NAME = "mlx-community/gemma-3-12b-it-qat-3bit"
+MODEL_NAME = "openrouter/google/gemma-3-27b-it:free"
 
 # Global model instance to keep in memory
 MODEL_INSTANCE = None
@@ -57,13 +58,27 @@ class LLMHandler(BaseHTTPRequestHandler):
             # Get request details
             method = self.command
             path = self.path
-            headers = dict(self.headers)
+            if path == '/favicon.ico':
+                self.send_response(404)
+                self.end_headers()
+                return
+
+            # Filter out Tailscale headers
+            headers = {k: v for k, v in self.headers.items() if not k.lower().startswith('tailscale-')}
+
             
             # Read body if present
             content_length = int(headers.get('Content-Length', 0))
             body = ""
             if content_length > 0:
                 body = self.rfile.read(content_length).decode('utf-8')
+            
+            # Print request details
+            print(f"\n=== Request Headers ===")
+            for header, value in headers.items():
+                print(f"{header}: {value}")
+            if body:
+                print(f"\n=== Request Body ===\n{body}")
             
             # Format raw HTTP request for LLM
             raw_http_request = f"{method} {path} HTTP/1.1\r\n"
@@ -79,6 +94,9 @@ class LLMHandler(BaseHTTPRequestHandler):
 For API paths (like /api/, /users, /login, etc.), respond with JSON.
 For regular paths, respond with HTML pages.
 Make the content plausible and nice based on the request.
+
+When returning HTML websites, include links to other relevant pages, for example if you are returning a blog website,
+link to previous and next posts and so on.
 
 NO MARKDOWN! NO CONTENT LENGTH header!!!!! No ``` ANYWHERE BEFORE OR AFTER YOUR OUTPUT!
 HTTP request starts after the separator:
@@ -118,19 +136,28 @@ Your response is: """
             # Send status line
             self.send_response(200)
             
-            # Parse and send custom headers from LLM
+            # Define our priority headers
+            priority_headers = {
+                'Connection': 'close'
+            }
+
+            body_bytes = body_part.encode('utf-8')
+            priority_headers['Content-Length'] = str(len(body_bytes))
+
+            # Send our priority headers first
+            for key, value in priority_headers.items():
+                self.send_header(key, value)
+            
+            # Only send LLM headers that don't conflict with our priority headers
             if headers_part:
                 for line in headers_part.split('\n'):
                     line = line.strip()
                     if ':' in line and not line.startswith('HTTP/'):
                         key, value = line.split(':', 1)
-                        self.send_header(key.strip(), value.strip())
+                        key = key.strip()
+                        if key.lower() not in [h.lower() for h in priority_headers.keys()]:
+                            self.send_header(key, value.strip())
             
-            # Add default headers if not provided
-            if 'content-type' not in [h.lower() for h in headers_part.split('\n') if ':' in h]:
-                self.send_header('Content-Type', 'text/html; charset=utf-8')
-            
-            self.send_header('Server', 'LLM-Powered-Server/1.0')
             self.end_headers()
             
             # Send body
