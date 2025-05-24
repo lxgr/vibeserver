@@ -32,12 +32,15 @@ Leave a message!
 
 <img width="1004" alt="image" src="https://github.com/user-attachments/assets/17f4238e-f534-4c7f-92c6-bb491c72d23e" />
 
+### 3D graphics
 
-### Terms and conditions
+It knows GLSL!
 
-It even knows not to take any responsibility for your shenanigans!
+<img width="812" alt="image" src="https://github.com/user-attachments/assets/38aadd20-1f4f-4b99-a573-c6dc1d286df9" />
 
-<img width="515" alt="image" src="https://github.com/user-attachments/assets/f88cfd15-c09d-49ad-9318-f41f9f536f3e" />
+### Creepypasta
+
+<img width="1266" alt="image" src="https://github.com/user-attachments/assets/8611d3ad-b6a5-43bf-85af-a33b7235c68d" />
 
 ## Feature roadmap
 
@@ -45,3 +48,13 @@ It even knows not to take any responsibility for your shenanigans!
 - [ ] Threads? (but it'll just eat through my token budget faster)
 - [ ] Persistence? (probably not)
 - [ ] Make it self-hosting (i.e. replace the Python script with an LLM prompt for it, then execute the result)
+
+## Warnings
+
+The output of this web server is inherently unpredictable. It might generate things you do not agree with or want to have hosted on your website.
+
+It will also serve *all* incoming requests, including those for robots.txt, and it might happily invite crawlers in that could then quickly churn through a prepaid LLM API key's budget, or rack up high costs on a billed one.
+
+Access control is accordingly advisable for several resons.
+
+See also [license.txt].
