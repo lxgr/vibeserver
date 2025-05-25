@@ -91,7 +91,7 @@ class LLMHandler(BaseHTTPRequestHandler):
                 raw_http_request += body
             
             # Prepare prompt for LLM
-            prompt = f"""You are an HTTP server responding to requests. Output ONLY a valid HTTP response with headers and body. No explanations, no commentary, just the raw HTTP response. NO MARKDOWN. You are speaking the WIRE protocol. No content-length; you'll get it wrong. Also no ``` before and after your output!
+            prompt = f"""You are an HTTP server responding to requests. Output ONLY a valid HTTP response with headers and body. No explanations, no commentary, just the raw HTTP response. NO MARKDOWN. You are speaking the WIRE protocol. No content-length; you'll likely get it wrong. Also no ``` before and after your output!
 
 For API paths (like /api/, /users, /login, etc.), respond with JSON.
 For regular paths, respond with HTML pages.
@@ -100,7 +100,12 @@ Make the content plausible and nice based on the request.
 When returning HTML websites, include links to other relevant pages, for example if you are returning a blog website,
 link to previous and next posts and so on.
 
-NO MARKDOWN! NO CONTENT LENGTH header!!!!! No ``` ANYWHERE BEFORE OR AFTER YOUR OUTPUT!
+You can include images in the HTML, but try to keep it limited to 2-3 per page as image generation is expensive. Don't use images for navigation icons etc., only for important content elements. Prefer CSS and dingbat fonts and what have you.
+
+If the request seems like it's for an image, and only then, you return a 302 and redirect to the following URL:
+https://image.pollinations.ai/prompt/<prompt goes here>, making up an appropriate prompt (URL escaped) as you see fit.
+Don't return any content, just the 302 redirect.
+
 HTTP request starts after the separator:
 --- REQUEST ---
 {raw_http_request}
@@ -131,12 +136,19 @@ Your response is: """
             elif '\n\n' in llm_response:
                 headers_part, body_part = llm_response.split('\n\n', 1)
             else:
-                # If no clear separation, treat it all as body with default headers
-                headers_part = ""
-                body_part = llm_response
+                # If no clear separation, treat it all as headers
+                headers_part = llm_response
+                body_part = ""
+            
+            # Parse status line
+            status_line = headers_part.split('\n')[0].strip()
+            try:
+                status_code = int(status_line.split()[1])
+            except (IndexError, ValueError):
+                status_code = 200
             
             # Send status line
-            self.send_response(200)
+            self.send_response(status_code)
             
             # Define our priority headers
             priority_headers = {
