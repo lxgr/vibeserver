@@ -67,6 +67,27 @@ link to previous and next posts and so on."""
         return """Don't include image references in HTML you're generating pointing to your own host. You can only generate text-based formats. SVG MIGHT be ok if it seems important, though.
         
         If you ever do receive a request that seems like it's for an image, return a 404."""
+    
+    @staticmethod
+    def load_custom_prompt():
+        """Load custom prompt from .prompt file if it exists"""
+        try:
+            with open('.prompt', 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+                # Keep only lines that don't start with # (ignoring spaces)
+                # but keep lines where # is escaped with \#
+                content = ''.join(
+                    line for line in lines 
+                    if not line.lstrip().startswith('#') or line.lstrip().startswith('\\#')
+                ).strip()
+                if content:
+                    print(f"📝 Loaded custom prompt from .prompt file ({len(content)} chars)")
+                    return content
+        except FileNotFoundError:
+            pass  # File doesn't exist, that's fine
+        except Exception as e:
+            print(f"⚠️  Warning: Could not read .prompt file: {e}")
+        return None
 
     
     @staticmethod
@@ -82,6 +103,11 @@ link to previous and next posts and so on."""
             sections.append(PromptBuilder.get_image_instructions())
         else:
             sections.append(PromptBuilder.get_no_image_instructions())
+
+        # Load custom prompt if available (dynamically, no caching)
+        custom_prompt = PromptBuilder.load_custom_prompt()
+        if custom_prompt:
+            sections.append(custom_prompt)
         
         # Join sections with newlines
         instructions = "\n\n".join(sections)
