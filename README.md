@@ -77,7 +77,7 @@ https://vibes.lxgr.net/scp-wiki/scp-3125
 
 ## Feature roadmap
 
-- [ ] Image generation
+- [x] Image generation
 - [ ] Threads? (but it'll just eat through my token budget faster)
 - [ ] Persistence? (probably not)
 - [ ] Make it self-hosting (i.e. replace the Python script with an LLM prompt for it, then execute the result)
