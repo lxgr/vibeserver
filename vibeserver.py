@@ -3,7 +3,8 @@
 # /// script
 # dependencies = [
 #   "llm",
-#   "llm-openrouter"
+#   "llm-openrouter",
+#   "dotenv"
 # ]
 # ///
 
@@ -18,10 +19,12 @@ import json
 import re
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import llm
+from dotenv import dotenv_values
+import os
 
-# Configuration
-PORT = 3000
-MODEL_NAME = "openrouter/google/gemma-3-27b-it:free"
+env = dotenv_values()
+PORT = int(env.get('PORT'))
+MODEL_NAME = env.get('MODEL_NAME')
 
 # Global model instance to keep in memory
 MODEL_INSTANCE = None
