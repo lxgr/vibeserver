@@ -182,6 +182,15 @@ class LLMHandler(BaseHTTPRequestHandler):
             
             # Prepare prompt for LLM
             prompt = PromptBuilder.build_prompt(raw_http_request)
+
+            # Check if client is still connected before expensive LLM call
+            try:
+                # Attempt to write a zero-byte message to test connection
+                self.wfile.write(b'')
+                self.wfile.flush()
+            except (BrokenPipeError, ConnectionResetError, OSError):
+                print(f"Client disconnected before generation for {method} {path}")
+                return
             
             # Get LLM response using cached model instance with streaming
             global MODEL_INSTANCE
