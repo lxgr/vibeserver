@@ -25,6 +25,7 @@ import os
 env = dotenv_values()
 PORT = int(env.get('PORT'))
 MODEL_NAME = env.get('MODEL_NAME')
+ENABLE_IMAGES = env.get('ENABLE_IMAGES', 'false').lower() == 'true'
 
 # Global model instance to keep in memory
 MODEL_INSTANCE = None
@@ -32,6 +33,69 @@ MODEL_INSTANCE = None
 def remove_thinking_tags(text):
     """Remove <think>...</think> sections from the response"""
     return re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+
+class PromptBuilder:
+    """Builds prompts based on configuration and request context"""
+    
+    @staticmethod
+    def get_base_instructions():
+        """Core instructions that always apply"""
+        return """You are an HTTP server responding to requests. Output ONLY a valid HTTP response with headers and body. No explanations, no commentary, just the raw HTTP response. NO MARKDOWN. You are speaking the WIRE protocol. No content-length; you'll likely get it wrong. Also no ``` before and after your output!
+
+For API paths (like /api/, /users, /login, etc.), respond with JSON.
+For regular paths, respond with HTML pages.
+Make the content plausible and nice based on the request."""
+    
+    @staticmethod
+    def get_html_instructions():
+        """Instructions for HTML content generation"""
+        return """When returning HTML websites, include links to other relevant pages, for example if you are returning a blog website,
+link to previous and next posts and so on."""
+    
+    @staticmethod
+    def get_image_instructions():
+        """Instructions for image handling (only if enabled)"""
+        return """You can include images in the HTML, but try to keep it limited to 2-3 per page as image generation is expensive. Don't use images for navigation icons etc., only for important content elements. Prefer CSS and dingbat fonts and what have you.
+
+        If the request seems like it's for an image, and only then, you return a 302 and redirect to the following URL:
+        https://image.pollinations.ai/prompt/<prompt goes here>, making up an appropriate prompt (URL escaped) as you see fit.
+        Don't return any content, just the 302 redirect."""
+
+    @staticmethod
+    def get_no_image_instructions():
+        """Don't try to manually generate images"""
+        return """Don't include image references in HTML you're generating pointing to your own host. You can only generate text-based formats. SVG MIGHT be ok if it seems important, though.
+        
+        If you ever do receive a request that seems like it's for an image, return a 404."""
+
+    
+    @staticmethod
+    def build_prompt(raw_http_request):
+        """Build the complete prompt based on configuration"""
+        sections = [
+            PromptBuilder.get_base_instructions(),
+            PromptBuilder.get_html_instructions()
+        ]
+        
+        # Add conditional sections based on environment
+        if ENABLE_IMAGES:
+            sections.append(PromptBuilder.get_image_instructions())
+        else:
+            sections.append(PromptBuilder.get_no_image_instructions())
+        
+        # Join sections with newlines
+        instructions = "\n\n".join(sections)
+        
+        # Add the request separator and actual request
+        prompt = f"""{instructions}
+
+HTTP request starts after the separator:
+--- REQUEST ---
+{raw_http_request}
+
+Your response is: """
+        
+        return prompt
 
 class LLMHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -91,26 +155,7 @@ class LLMHandler(BaseHTTPRequestHandler):
                 raw_http_request += body
             
             # Prepare prompt for LLM
-            prompt = f"""You are an HTTP server responding to requests. Output ONLY a valid HTTP response with headers and body. No explanations, no commentary, just the raw HTTP response. NO MARKDOWN. You are speaking the WIRE protocol. No content-length; you'll likely get it wrong. Also no ``` before and after your output!
-
-For API paths (like /api/, /users, /login, etc.), respond with JSON.
-For regular paths, respond with HTML pages.
-Make the content plausible and nice based on the request.
-
-When returning HTML websites, include links to other relevant pages, for example if you are returning a blog website,
-link to previous and next posts and so on.
-
-You can include images in the HTML, but try to keep it limited to 2-3 per page as image generation is expensive. Don't use images for navigation icons etc., only for important content elements. Prefer CSS and dingbat fonts and what have you.
-
-If the request seems like it's for an image, and only then, you return a 302 and redirect to the following URL:
-https://image.pollinations.ai/prompt/<prompt goes here>, making up an appropriate prompt (URL escaped) as you see fit.
-Don't return any content, just the 302 redirect.
-
-HTTP request starts after the separator:
---- REQUEST ---
-{raw_http_request}
-
-Your response is: """
+            prompt = PromptBuilder.build_prompt(raw_http_request)
             
             # Get LLM response using cached model instance with streaming
             global MODEL_INSTANCE
