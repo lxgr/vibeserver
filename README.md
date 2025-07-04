@@ -80,7 +80,7 @@ https://vibes.lxgr.net/scp-wiki/scp-3125
 - [x] Image generation
 - [ ] Threads? (but it'll just eat through my token budget faster)
 - [ ] Persistence? (probably not)
-- [ ] Make it self-hosting (i.e. replace the Python script with an LLM prompt for it, then execute the result)
+- [ ] Make it self-hosting (i.e. replace the Python script with an LLM prompt for it, then execute the result), or at least back as many methods as possible by https://github.com/awwaiid/gremllm/
 
 ## Warnings
 
