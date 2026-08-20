@@ -21,6 +21,7 @@ It's protected by HTTP basic authentication to provide some protection against c
   - For API-based models, you'll need to set up an API key
   - Local models have to be instlled per your plugin's instructions. For `mlx-llm`, running `llm install llm-mlx` and then `llm mlx download-model <modelname>` should do the trick. Non-thinking models work best for acceptable latency.
 - Configure your desired port number as `PORT` and model name as `MODEL_NAME`.
+- Optionally set `MAX_THREADS` to limit concurrent requests. It defaults to `1`.
 
 ## Gallery
 
